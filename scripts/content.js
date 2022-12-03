@@ -1,21 +1,19 @@
-function debounce(func, timeout = 300) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func.apply(this, args);
-    }, timeout);
-  };
-}
+// get element by html role and tag
+const newsFeed = document.getElementById("ssrb_feed_start");
+const postContainer = newsFeed?.nextElementSibling?.childNodes[1];
 
-document.addEventListener(
-  "scroll",
-  debounce(() => {
-    const posts = document.querySelectorAll("div.x1lliihq") || [];
-    Array.from(posts).forEach((post) => {
+// add mutation observer to the post container
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    const posts = mutation.addedNodes || [];
+    posts.forEach((post) => {
       if (post.innerText.includes("Reels and short videos")) {
         post.style.display = "none";
       }
     });
-  }, 500)
-);
+  });
+});
+
+observer.observe(postContainer, {
+  childList: true,
+});
